@@ -793,17 +793,22 @@ class Upgrader {
   }
 
   Future<bool> _getSavedPrefs() async {
-    var prefs = await SharedPreferences.getInstance();
-    final lastTimeAlerted = prefs.getString('lastTimeAlerted');
-    if (lastTimeAlerted != null) {
-      _lastTimeAlerted = DateTime.parse(lastTimeAlerted);
+    try {
+      var prefs = await SharedPreferences.getInstance();
+      final lastTimeAlerted = prefs.getString('lastTimeAlerted');
+      if (lastTimeAlerted != null) {
+        _lastTimeAlerted = DateTime.parse(lastTimeAlerted);
+      }
+
+      _lastVersionAlerted = prefs.getString('lastVersionAlerted');
+
+      _userIgnoredVersion = prefs.getString('userIgnoredVersion');
+
+      return true;
+    } catch (e) {
+      print('upgrader: _getSavedPrefs ${e.toString()}');
+      return false;
     }
-
-    _lastVersionAlerted = prefs.getString('lastVersionAlerted');
-
-    _userIgnoredVersion = prefs.getString('userIgnoredVersion');
-
-    return true;
   }
 
   void _sendUserToAppStore() async {
